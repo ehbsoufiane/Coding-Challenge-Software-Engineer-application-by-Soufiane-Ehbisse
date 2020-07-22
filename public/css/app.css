@@ -1,0 +1,10 @@
+#loader {
+  top: 40%;
+  left: 45%;
+  position: absolute;
+}
+
+#app {
+  display: none;
+}
+

@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Get Categories List
+        // Get Categories List and shere it with view
         $categories = Category::where('parent_category_id', NULL)->get();
         return view('category.index', compact('categories'));
     }
@@ -32,7 +32,7 @@ class CategoryController extends Controller
             'name'     => 'required|string|max:191'
         ]);
 
-        // Store Data
+        // Store Data in DB
         $category = new Category();
         $category->name = $request->name;
         $category->parent_category_id = $request->has('has_parent_category') ? $request->parent_id : NULL;
@@ -53,8 +53,12 @@ class CategoryController extends Controller
         // Check Data
 
         // Delete Category
-        $category->delete();
-        
+        // you can use softdelete for incentive Data
+        foreach($category->subcategory()->get() as $subCategory){
+            $subCategory->delete();
+        }
+        $category->forcedelete();
+
         return back();
     }
 }

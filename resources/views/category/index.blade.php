@@ -59,16 +59,13 @@
 
             <ul>
                 @foreach($categories as $category)
-                    <li class="list-group-item"><strong>{{ $category->name }}</strong> <button
-                            class="btn btn-danger btn-sm btn-delete" data-id="{{ $category->id }}">X</button></li>
+                    <li class="list-group-item"><strong>{{ $category->name }}</strong> <button class="btn btn-danger btn-sm btn-delete" v-on:click="deleteModal({{ $category->id }}, true)">X</button></li>
                     @if(count($category->subcategory))
+                    <ul>
                         @foreach($category->subcategory as $subcategory)
-                            <ul>
-                                <li class="list-group-item">{{ $subcategory->name }} <button
-                                        class="btn btn-danger btn-sm btn-delete"
-                                        data-id="{{ $subcategory->id }}">X</button></li>
-                            </ul>
+                            <li class="list-group-item">{{ $subcategory->name }} <button class="btn btn-danger btn-sm btn-delete" v-on:click="deleteModal({{ $subcategory->id }}, false)">X</button></li>
                         @endforeach
+                    </ul>
                     @endif
 
                 @endforeach
@@ -83,6 +80,11 @@
 <basic-modal id="m_modal_1" title="Deleting!">
     <div slot="modal-body">
         <h6>Confirme Delete ?</h6>
+        <div class="alert alert-dismissible alert-warning" v-if="is_parent">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4 class="alert-heading">Warning!</h4>
+            <p class="mb-0">Sub categories will be <strong>DELETED</strong>.</p>
+        </div>
     </div>
     <div slot="modal-footer">
         <form :action="basicModal.url" method="POST">
@@ -101,18 +103,17 @@
         el: '#app',
         data: {
             basicModal: {
-                url: ''
+                url: '',
             },
-            has_parent_category: false
+            has_parent_category: false,
+            is_parent: false
         },
         mounted: function () {
-            $(document).on('click', '.btn-delete', function () {
-                app.deleteModal($(this).attr('data-id'));
-            })
         },
         methods: {
-            deleteModal: function ($id) {
+            deleteModal: function ($id, $is_parent) {
                 this.basicModal.url = '/categories/' + $id;
+                this.is_parent = $is_parent;
                 $('#m_modal_1').modal('show');
             },
         }
