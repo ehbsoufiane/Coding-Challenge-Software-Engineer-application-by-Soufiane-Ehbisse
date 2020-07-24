@@ -40,8 +40,8 @@
                         <legend>Parent Category</legend>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="has_parent_category" <blade
-                                    if|(!count(%24categories))%20disabled%20%40endif%20v-model%3D%26%2334%3Bhas_parent_category%26%2334%3B%3E%0D>
+                                <input class="form-check-input" type="checkbox" name="has_parent_category"
+                                    @if(!count($categories)) disabled @endif v-model="has_parent_category">
                                 Link to existing parent category?
                             </label>
                         </div>
