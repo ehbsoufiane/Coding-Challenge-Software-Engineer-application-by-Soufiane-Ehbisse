@@ -7,14 +7,14 @@
 @section('content')
 <section>
     @if(Session::has('error'))
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-dismissible alert-danger">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Erreur!</strong> {{ Session::get('error') }}
-              </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-dismissible alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Erreur!</strong> {{ Session::get('error') }}
+                </div>
+            </div>
         </div>
-    </div>
     @endif
     <div class="row">
         <div class="col-md-6">
@@ -30,8 +30,7 @@
                         <label for="name">Name</label>
                         <input type="text"
                             class="form-control {{ $errors->has('name')?'is-invalid':'' }}"
-                            id="name" name="name" aria-describedby="Category Name" 
-                            placeholder="Enter category name">
+                            id="name" name="name" aria-describedby="Category Name" placeholder="Enter category name">
                         @if($errors->has('name'))
                             <div class="invalid-feedback">{{ $errors->first('name') }}</div>
                         @endif
@@ -41,8 +40,8 @@
                         <legend>Parent Category</legend>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="has_parent_category"
-                                    @if(!count($categories)) disabled @endif v-model="has_parent_category">
+                                <input class="form-check-input" type="checkbox" name="has_parent_category" <blade
+                                    if|(!count(%24categories))%20disabled%20%40endif%20v-model%3D%26%2334%3Bhas_parent_category%26%2334%3B%3E%0D>
                                 Link to existing parent category?
                             </label>
                         </div>
@@ -69,13 +68,17 @@
 
             <ul>
                 @foreach($categories as $category)
-                    <li class="list-group-item"><strong>{{ $category->name }}</strong> <button class="btn btn-danger btn-sm btn-delete" v-on:click="deleteModal({{ $category->id }}, true)">X</button></li>
+                    <li class="list-group-item"><strong>{{ $category->name }}</strong> <button
+                            class="btn btn-danger btn-sm btn-delete"
+                            v-on:click="deleteModal({{ $category->id }}, true)">X</button></li>
                     @if(count($category->subcategory))
-                    <ul>
-                        @foreach($category->subcategory as $subcategory)
-                            <li class="list-group-item">{{ $subcategory->name }} <button class="btn btn-danger btn-sm btn-delete" v-on:click="deleteModal({{ $subcategory->id }}, false)">X</button></li>
-                        @endforeach
-                    </ul>
+                        <ul>
+                            @foreach($category->subcategory as $subcategory)
+                                <li class="list-group-item">{{ $subcategory->name }} <button
+                                        class="btn btn-danger btn-sm btn-delete"
+                                        v-on:click="deleteModal({{ $subcategory->id }}, false)">X</button></li>
+                            @endforeach
+                        </ul>
                     @endif
 
                 @endforeach
@@ -118,8 +121,7 @@
             has_parent_category: false,
             is_parent: false
         },
-        mounted: function () {
-        },
+        mounted: function () {},
         methods: {
             deleteModal: function ($id, $is_parent) {
                 this.basicModal.url = '/categories/' + $id;

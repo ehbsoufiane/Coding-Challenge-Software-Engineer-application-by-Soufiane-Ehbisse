@@ -9,30 +9,34 @@
 @section('content')
 <section>
     @if(Session::has('error'))
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-dismissible alert-danger">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Erreur!</strong> {{ Session::get('error') }}
-              </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-dismissible alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Erreur!</strong> {{ Session::get('error') }}
+                </div>
+            </div>
         </div>
-    </div>
     @endif
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-3">
-                <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
-    
+                <form method="POST" action="{{ route('products.store') }}"
+                    enctype="multipart/form-data">
+
                     @csrf
-    
+
                     <fieldset>
                         <legend>Add New Product</legend>
-    
+
                         <div
                             class="form-group {{ $errors->has('name')?'has-danger':'' }}">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control {{ $errors->has('name')?'is-invalid':'' }}" id="name" name="name" aria-describedby="Category Name" required placeholder="Enter category name" value="{{ old('name') }}">
-                            
+                            <input type="text"
+                                class="form-control {{ $errors->has('name')?'is-invalid':'' }}"
+                                id="name" name="name" aria-describedby="Category Name" required
+                                placeholder="Enter category name" value="{{ old('name') }}">
+
                             @if($errors->has('name'))
                                 <div class="invalid-feedback">{{ $errors->first('name') }}</div>
                             @endif
@@ -40,18 +44,25 @@
                         <div
                             class="form-group {{ $errors->has('name')?'has-danger':'' }}">
                             <label for="name">Description</label>
-                            <textarea name="description" id="description" cols="15" rows="5" class="form-control {{ $errors->has('description')?'is-invalid':'' }}" required placeholder="product decription here...." value="{{ old('description') }}"></textarea>
+                            <textarea name="description" id="description" cols="15" rows="5"
+                                class="form-control {{ $errors->has('description')?'is-invalid':'' }}"
+                                required placeholder="product decription here...."
+                                value="{{ old('description') }}"></textarea>
 
                             @if($errors->has('description'))
-                                <div class="invalid-feedback">{{ $errors->first('description') }}</div>
+                                <div class="invalid-feedback">{{ $errors->first('description') }}
+                                </div>
                             @endif
                         </div>
 
                         <div
                             class="form-group {{ $errors->has('price')?'has-danger':'' }}">
                             <label for="name">Price</label>
-                            <input type="number" step="0.1" class="form-control {{ $errors->has('price')?'is-invalid':'' }}" id="price" name="price" aria-describedby="Category Name" required placeholder="Enter product price" value="{{ old('price') }}">
-                           
+                            <input type="number" step="0.1"
+                                class="form-control {{ $errors->has('price')?'is-invalid':'' }}"
+                                id="price" name="price" aria-describedby="Category Name" required
+                                placeholder="Enter product price" value="{{ old('price') }}">
+
                             @if($errors->has('price'))
                                 <div class="invalid-feedback">{{ $errors->first('price') }}</div>
                             @endif
@@ -59,16 +70,16 @@
 
                         <div class="form-group">
                             <div class="input-group mb-3">
-                              <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="image">
-                                <label class="custom-file-label" for="inputGroupFile02" >Choose product image</label>
-                              </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFile02" name="image">
+                                    <label class="custom-file-label" for="inputGroupFile02">Choose product image</label>
+                                </div>
                             </div>
                             @if($errors->has('image'))
                                 <div class="invalid-feedback">{{ $errors->first('image') }}</div>
                             @endif
-                          </div>
-    
+                        </div>
+
                         <div class="form-group">
                             <label for="parent_id">Select Category</label>
                             <select class="form-control select2" name="categories[]" multiple="multiple">
@@ -77,7 +88,7 @@
                                 @endforeach
                             </select>
                         </div>
-    
+
                         <button type="submit" class="btn btn-primary">Save Category</button>
                     </fieldset>
                 </form>
@@ -97,12 +108,12 @@
                         <select class="form-control search-input" data-col-index="0">
                             <option value="" disabled>Search by Category</option>
                             <option value="">ALL</option>
-                            @foreach ($categories as $category)
+                            @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    
+
                 </form>
             </div>
             <div class="col-md-4">
@@ -123,33 +134,33 @@
             <!--end: Search Form -->
         </div>
     </div>
-    
-        <div class="col-md-12">
-            <table class="table table-striped- table-bordered table-hover table-checkable" id="table_1">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Category</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Category</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+
+    <div class="col-md-12">
+        <table class="table table-striped- table-bordered table-hover table-checkable" id="table_1">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 
 
 
@@ -204,85 +215,93 @@
                     dataType: 'json'
                 },
                 columns: [{
-                        data: "id", 
-                    }, {
-                        data: "name", 
-                    }, {
-                        data: "description", 
-                    }, {
-                        data: "price", 
-                    }, {
-                        data: "image", 
-                    }, {
-                        data: "category", 
-                    }, {
-                        data: "Actions" 
+                    data: "id",
+                }, {
+                    data: "name",
+                }, {
+                    data: "description",
+                }, {
+                    data: "price",
+                }, {
+                    data: "image",
+                }, {
+                    data: "category",
+                }, {
+                    data: "Actions"
                 }],
                 columnDefs: [{
                     targets: -1,
                     title: "ACTIONS",
                     class: 'nowrap center',
                     orderable: !1,
-                    render: function(a, e, t, n) {
-                        return '<button data-id="'+ t.id +'" class="btn btn-danger btn-sm btn-delete" title="Delete Product"> X </button>'
+                    render: function (a, e, t, n) {
+                        return '<button data-id="' + t.id +
+                            '" class="btn btn-danger btn-sm btn-delete" title="Delete Product"> X </button>'
                     }
-                },{
+                }, {
                     targets: 0,
                     orderable: false,
-                    render: function(a, e, t, n) {
-                        return '<b>#' + a +'</b>'
-                    } 
-                },{
+                    render: function (a, e, t, n) {
+                        return '<b>#' + a + '</b>'
+                    }
+                }, {
                     targets: 1,
                     orderable: true,
-                    render: function(a, e, t, n) {
+                    render: function (a, e, t, n) {
                         return a
-                    } 
-                },{
+                    }
+                }, {
                     targets: 2,
                     orderable: false,
-                    render: function(a, e, t, n) {
+                    render: function (a, e, t, n) {
                         return a
                     }
-                },{
+                }, {
                     targets: 3,
                     orderable: true,
-                    render: function(a, e, t, n) {
-                        return a +' $'
+                    render: function (a, e, t, n) {
+                        return a + ' $'
                     }
-                },{
+                }, {
                     targets: 4,
                     orderable: false,
-                    render: function(a, e, t, n) {
-                        return '<img src="/storage/product/images/' + a +'" style="width: 70px;">'
-                        
+                    render: function (a, e, t, n) {
+                        return '<img src="/storage/product/images/' + a +
+                            '" style="width: 70px;">'
+
                     }
-                },{
+                }, {
                     targets: 5,
                     orderable: false,
-                    render: function(a, e, t, n) {
-                        categories = t.categories.length ? '' : '<span class="badge badge-dark">Uncategorized</span>';
-                        t.categories.forEach(element => categories += ' <span class="badge badge-dark">'+ element.name +'</span>');
+                    render: function (a, e, t, n) {
+                        categories = t.categories.length ? '' :
+                            '<span class="badge badge-dark">Uncategorized</span>';
+                        t.categories.forEach(element => categories +=
+                            ' <span class="badge badge-dark">' + element.name +
+                            '</span>');
                         return categories
                     }
                 }]
             });
-            $("#m_search").on("click", function(t) {
+            $("#m_search").on("click", function (t) {
                 t.preventDefault();
                 var e = {};
-                $(".search-input").each(function() {
+                $(".search-input").each(function () {
                     var a = $(this).data("col-index");
                     e[a] ? e[a] += "|" + $(this).val() : e[a] = $(this).val()
-                }), $.each(e, function(t, e) {
+                }), $.each(e, function (t, e) {
                     a.column(t).search(e || "", !1, !1)
                 }), a.table().draw()
             });
-            $("#m_reset").on("click", function(t) {
-                t.preventDefault(), $(".search-input").each(function() {
+            $("#m_reset").on("click", function (t) {
+                t.preventDefault(), $(".search-input").each(function () {
                     $(this).val(""), a.column($(this).data("col-index")).search("", !1, !1)
                 }), a.table().draw()
             });
-            $('.select2').select2({maximumSelectionLength: 2, width: '100%'});
+            $('.select2').select2({
+                maximumSelectionLength: 2,
+                width: '100%'
+            });
         },
         methods: {
             deleteModal: function ($id) {
