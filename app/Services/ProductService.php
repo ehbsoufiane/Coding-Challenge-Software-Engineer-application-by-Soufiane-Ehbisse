@@ -5,16 +5,16 @@ namespace App\Services;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Repositories\CategoryRepository;
+use App\Repositories\ProductRepository;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryService
+class ProductService
 {
 
-    protected $categoryRepository;
+    protected $productRepository;
 
-    public function __construct(CategoryRepository $categoryRepository) {
-        $this->categoryRepository = $categoryRepository;
+    public function __construct(ProductRepository $productRepository) {
+        $this->productRepository = $productRepository;
     }
 
     
@@ -23,16 +23,19 @@ class CategoryService
      *
      * @return \Illuminate\Http\Response
      */
-    public function getAll()
+    public function getAll($request)
     {
-        return $this->categoryRepository->getAllCategories();
+        return $this->productRepository->getAllProducts($request);
     }
 
     public function storeData($data) {
         // Validate Data
 
         $rules = [
-            'name'     => 'required|string|max:191'
+            'name'          => 'required|string|max:191',
+            'description'   => 'required|string|max:191',
+            'price'         => 'required',
+            'image'         => 'image|mimes:jpeg,bmp,png|max:5120' // 5Mb
         ];
 
         $validator = Validator::make($data->all(), $rules);
@@ -40,7 +43,7 @@ class CategoryService
             throw new \InvalidArgumentException($validator->errors()->first());
         }
 
-        $this->categoryRepository->store($data);
+        $this->productRepository->store($data);
     }
 
     public function deleteById($id)
@@ -48,7 +51,7 @@ class CategoryService
         DB::beginTransaction();
 
         try {
-            $category = $this->categoryRepository->destroy($id);
+            $product = $this->productRepository->destroy($id);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -59,6 +62,6 @@ class CategoryService
 
         DB::commit();
 
-        return $category;
+        return $product;
     }
 }

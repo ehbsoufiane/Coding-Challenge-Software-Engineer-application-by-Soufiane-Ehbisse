@@ -6,11 +6,23 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
 use App\Models\ProductCategories;
+use App\Services\CategoryService;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+
+    protected $productService;
+    protected $categoryService;
+
+    public function __construct(ProductService $productService, CategoryService $categoryService) {
+        $this->productService = $productService;
+        $this->categoryService = $categoryService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,61 +30,20 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // if Request is ajax redirect with Data to datatable
-        if ($request->ajax()) {
-            $columns = [
-                0  => 'id',
-                1  => 'name',
-                2  => 'description',
-                3  => 'price',
-                4  => 'image',
-                5  => 'Actions'
-            ];
+        try {
             
-            $order              = $columns[$request->input('order.0.column')];
-            $dir                = $request->input('order.0.dir');
-            $category_id        = $request->input('columns.0.search.value');
-
-            $products = Product::when($category_id, function ($q) use ($category_id) {
-                            $q->select('products.*', 'categories.id as categoryId')
-                                ->leftJoin('product_categories', 'products.id', '=', 'product_categories.product_id')
-                                ->leftJoin('categories', 'categories.id', '=', 'product_categories.category_id');
-                            $q->where('categories.id', $category_id);
-                        });
-            
-            $iTotalDisplayRecords = $products->get()->count();
-            $products = $products->offset($request->start)
-                                ->limit($request->length)
-                                ->orderBy($order, $dir)
-                                ->get();
-            
-            foreach ($products as $key => $product) {
-                $temp_categories = [];
-                foreach ($product->categories() as $key => $category) {
-                    $category = [
-                        'id' => $category->category->id,
-                        'name' => $category->category->name,
-                    ];
-                    array_push($temp_categories, $category);
-                }
-                $product->categories = $temp_categories;
+            // if Request is ajax redirect with Data to datatable
+            if ($request->ajax()) {
+                return $this->productService->getAll($request);
             }
+            // redirect to product view and compact with categories
+            $categories = $this->categoryService->getAll();
+            return view('product.index', compact('categories'));
 
-            return response()->json([
-                'draw'                 => $request->draw,
-                'iTotalRecords'        => $iTotalDisplayRecords,
-                'iTotalDisplayRecords' => $iTotalDisplayRecords,
-                'recordsFiltered'      => $products->count(),
-                // 'sEcho'                => 0,
-                'sColumns'             => "",
-                'aaData'               => $products,
-                'col'                  => $request->input('order.0.column')
-            ], 200);
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
         }
-
-        // redirect to product view and compact with categories
-        $categories = Category::all();
-        return view('product.index', compact('categories'));
+        return back();
     }
 
     /**
@@ -83,38 +54,12 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate Data
-        $this->validate($request, [
-            'name'          => 'required|string|max:191',
-            'description'   => 'required|string|max:191',
-            'price'         => 'required',
-            'image'         => 'image|mimes:jpeg,bmp,png|size:5120' // 5Mb
-        ]);
 
-        // store Data
-        $product = new Product();
-        $product->name          = $request->name;
-        $product->description   = $request->description;
-        $product->price         = $request->price;
-
-        if($request->hasFile('image')) {
-            $fullPath       = Storage::disk('public')->putFile('product/images/', new File($request->image));
-            $product->image = basename($fullPath);
+        try {
+            $this->productService->storeData($request);
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
         }
-
-        $product->save();
-
-        // store categories related to each product
-        if ($request->has('categories')) {
-            foreach ($request->categories as $key => $category) {
-                $productCategories              = new ProductCategories();
-                $productCategories->product_id  = $product->id;
-                $productCategories->category_id = $category;
-        
-                $productCategories->save();
-            }
-        }
-
         return back();
     }
 
@@ -124,17 +69,14 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        // delete image related to this product
-        Storage::disk('public')->delete('product/images/' .$product->image);
-
-        // destroy categories related to this product
-
-
-        // and finaly destroy product
-        $product->delete();
-
+        try {
+            $this->productService->deleteById($id);
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
+        }
         return back();
+
     }
 }

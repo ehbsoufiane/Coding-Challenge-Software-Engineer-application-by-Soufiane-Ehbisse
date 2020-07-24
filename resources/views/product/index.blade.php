@@ -8,6 +8,16 @@
 
 @section('content')
 <section>
+    @if(Session::has('error'))
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-dismissible alert-danger">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Erreur!</strong> {{ Session::get('error') }}
+              </div>
+        </div>
+    </div>
+    @endif
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-3">
@@ -21,7 +31,7 @@
                         <div
                             class="form-group {{ $errors->has('name')?'has-danger':'' }}">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control {{ $errors->has('name')?'is-invalid':'' }}" id="name" name="name" aria-describedby="Category Name" required placeholder="Enter category name">
+                            <input type="text" class="form-control {{ $errors->has('name')?'is-invalid':'' }}" id="name" name="name" aria-describedby="Category Name" required placeholder="Enter category name" value="{{ old('name') }}">
                             
                             @if($errors->has('name'))
                                 <div class="invalid-feedback">{{ $errors->first('name') }}</div>
@@ -30,7 +40,7 @@
                         <div
                             class="form-group {{ $errors->has('name')?'has-danger':'' }}">
                             <label for="name">Description</label>
-                            <textarea name="description" id="description" cols="15" rows="5" class="form-control {{ $errors->has('name')?'is-invalid':'' }}" required placeholder="product decription here...."></textarea>
+                            <textarea name="description" id="description" cols="15" rows="5" class="form-control {{ $errors->has('description')?'is-invalid':'' }}" required placeholder="product decription here...." value="{{ old('description') }}"></textarea>
 
                             @if($errors->has('description'))
                                 <div class="invalid-feedback">{{ $errors->first('description') }}</div>
@@ -40,7 +50,7 @@
                         <div
                             class="form-group {{ $errors->has('price')?'has-danger':'' }}">
                             <label for="name">Price</label>
-                            <input type="number" step="0.1" class="form-control {{ $errors->has('price')?'is-invalid':'' }}" id="price" name="price" aria-describedby="Category Name" required placeholder="Enter product price">
+                            <input type="number" step="0.1" class="form-control {{ $errors->has('price')?'is-invalid':'' }}" id="price" name="price" aria-describedby="Category Name" required placeholder="Enter product price" value="{{ old('price') }}">
                            
                             @if($errors->has('price'))
                                 <div class="invalid-feedback">{{ $errors->first('price') }}</div>
@@ -238,7 +248,7 @@
                     targets: 3,
                     orderable: true,
                     render: function(a, e, t, n) {
-                        return a
+                        return a +' $'
                     }
                 },{
                     targets: 4,
