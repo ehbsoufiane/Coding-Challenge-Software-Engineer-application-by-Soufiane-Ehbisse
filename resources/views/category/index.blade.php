@@ -6,6 +6,16 @@
 
 @section('content')
 <section>
+    @if(Session::has('error'))
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-dismissible alert-danger">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Erreur!</strong> {{ Session::get('error') }}
+              </div>
+        </div>
+    </div>
+    @endif
     <div class="row">
         <div class="col-md-6">
             <form method="POST" action="{{ route('categories.store') }}">
@@ -20,7 +30,7 @@
                         <label for="name">Name</label>
                         <input type="text"
                             class="form-control {{ $errors->has('name')?'is-invalid':'' }}"
-                            id="name" name="name" aria-describedby="Category Name" required
+                            id="name" name="name" aria-describedby="Category Name" 
                             placeholder="Enter category name">
                         @if($errors->has('name'))
                             <div class="invalid-feedback">{{ $errors->first('name') }}</div>

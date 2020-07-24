@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
+use Illuminate\Support\Facades\Session;
 
 class CategoryController extends Controller
 {
+
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService) {
+        $this->categoryService = $categoryService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,9 +23,14 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Get Categories List and shere it with view
-        $categories = Category::where('parent_category_id', NULL)->get();
-        return view('category.index', compact('categories'));
+        try {
+            // Get Categories List and shere it with view
+            $categories = $this->categoryService->getAll()->where('parent_category_id', NULL);
+            return view('category.index', compact('categories'));
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
+        }
+        return back();
     }
 
     /**
@@ -27,18 +41,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate Data
-        $this->validate($request, [
-            'name'     => 'required|string|max:191'
-        ]);
-
-        // Store Data in DB
-        $category = new Category();
-        $category->name = $request->name;
-        $category->parent_category_id = $request->has('has_parent_category') ? $request->parent_id : NULL;
-
-        $category->save();
-
+        try {
+            $this->categoryService->storeData($request);
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
+        }
         return back();
     }
 
@@ -48,17 +55,13 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        // Check Data
-
-        // Delete Category
-        // you can use softdelete for incentive Data
-        foreach($category->subcategory()->get() as $subCategory){
-            $subCategory->delete();
+        try {
+            $this->categoryService->deleteById($id);
+        } catch (\Exception $e) {
+            Session::flash('error', $e->getMessage());
         }
-        $category->forcedelete();
-
         return back();
     }
 }
